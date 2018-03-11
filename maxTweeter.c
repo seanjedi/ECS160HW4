@@ -81,7 +81,12 @@ int main(int argc,char *argv[])
         return -1;
     }
 
-    char line[1000];
+
+    //grab the first line if first line empty or nothing in there, then error
+    //@field_count: The count of fields for the header 
+    //each line should have less fields than this count
+    //@name_field:Index of the name field
+    char line[377];
     int field_count, name_field;
     if(fgets(line, 377, stream) == NULL){
         printf("An error occured or File was empty!\n");
@@ -89,23 +94,35 @@ int main(int argc,char *argv[])
         return -1;
     }
 
+    //calls helper function get_name_field,
+    //populates name_field and field_count
     name_field = get_name_field(line, &field_count);
 
+    //if get_name_field returns -1, error occured
     if(name_field == -1){
         free(stream);
         printf("No name field in csv!\n");
         return -1;
     }
 
+    //make a structure array for tweeters
+    //@tweeter_count is the number of tweets that we read
     struct tweeter *tweets = (struct tweeter *)malloc(sizeof(struct tweeter) * MAX_LINES);
     int tweeter_count = 0;
     char* token;
+    //This while loop reads each line until the end
+    //@field_number: counts the number of fields per line
     while (fgets(line, 377, stream) != NULL){
         int field_number = 0;
         token = strtok(line, ",");
+        //while loop to parse out the line per field
+        //If field_number is the same as the name_field, check name
         while(token != NULL){               
             if(field_number == name_field){
+                //Goes through the tweet array to find if there is a name match
                 for(int i = 0; i <= tweeter_count; i++){ 
+                    //if no names match, make a new entry
+                    //if name matches, increment the count of tweets person made
                     if(i == tweeter_count){
                         int length = strlen(token);
                         tweets[tweeter_count].name = (char*)malloc(sizeof(token));
@@ -123,9 +140,13 @@ int main(int argc,char *argv[])
             }
             field_number++;
             token = strtok(NULL, ",");
-        } 
+        }
+        //if there is a wrong amount of fields on a line, then the line is invalid 
         if(field_number != field_count){
             printf("Not the right amount of entries on this line!\n");
+            for(int i = 0; i < tweeter_count; i++){
+                free(tweets[i].name);
+            }
             free (tweets);
             free(stream);
             return -1;
@@ -151,6 +172,11 @@ int main(int argc,char *argv[])
     while(prints < 10){ 
         printf("<%s>: <%i>\n", tweets[prints].name, tweets[prints].count);
         prints++;
+    }
+
+    //free all the memory
+    for(int i = 0; i < tweeter_count; i++){
+        free(tweets[i].name);
     }
     free (tweets);
     free(stream);
