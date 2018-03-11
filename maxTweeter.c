@@ -55,6 +55,7 @@ struct tweeter{
 };
 
 
+
 int main(int argc,char *argv[])
 {
     //The expected number of arguments passed on the command line is
@@ -84,12 +85,14 @@ int main(int argc,char *argv[])
     int field_count, name_field;
     if(fgets(line, 377, stream) == NULL){
         printf("An error occured or File was empty!\n");
+        free(stream);
         return -1;
     }
 
     name_field = get_name_field(line, &field_count);
 
     if(name_field == -1){
+        free(stream);
         printf("No name field in csv!\n");
         return -1;
     }
@@ -120,6 +123,8 @@ int main(int argc,char *argv[])
             }
             if(field_number == field_count){
                 printf("Too many entries on this line!\n");
+                free (tweets);
+                free(stream);
                 return -1;
             }
             
@@ -147,7 +152,8 @@ int main(int argc,char *argv[])
         printf("<%s>: <%i>\n", tweets[prints].name, tweets[prints].count);
         prints++;
     }
-    
+    free (tweets);
+    free(stream);
     return 0;
 
 }
