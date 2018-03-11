@@ -88,7 +88,6 @@ int main(int argc,char *argv[])
         free(stream);
         return -1;
     }
-
     name_field = get_name_field(line, &field_count);
 
     if(name_field == -1){
@@ -100,14 +99,18 @@ int main(int argc,char *argv[])
     struct tweeter *tweets = (struct tweeter *)malloc(sizeof(struct tweeter) * MAX_LINES);
     int tweeter_count = 0;
     char* token;
-    while (fgets(line, 377, stream)){
+    while (fgets(line, 375, stream)){
         int field_number = 0;
         token = strtok(line, ",");
+
         while(token != NULL){               
             if(field_number == name_field){
                 for(int i = 0; i <= tweeter_count; i++){ 
+
                     if(i == tweeter_count){
-                        tweets[tweeter_count].name = token;
+			tweets[tweeter_count].name = (char*)malloc(sizeof(token));
+			strcpy(tweets[tweeter_count].name, token);
+                        //tweets[tweeter_count].name = token;
                         printf("Name: %s\n", tweets[i].name);
                         tweets[tweeter_count].count = 1;
                         tweeter_count++;
@@ -121,7 +124,7 @@ int main(int argc,char *argv[])
                     }
                 }
             }
-            if(field_number == field_count){
+            if(field_number != field_count){
                 printf("Too many entries on this line!\n");
                 free (tweets);
                 free(stream);
@@ -130,8 +133,10 @@ int main(int argc,char *argv[])
             
             field_number++;
             token = strtok(NULL, ",");
+
         }
     }
+
 
     //use bubblesort to sort out the struct
     struct tweeter temp;
@@ -145,13 +150,15 @@ int main(int argc,char *argv[])
         }
     }
 
-   
     //print out the first 10 lines of the struct
     int prints = 0;
-    while(prints < 10){ 
+    while(prints < 20){ 
         printf("<%s>: <%i>\n", tweets[prints].name, tweets[prints].count);
         prints++;
     }
+
+
+ 
     free (tweets);
     free(stream);
     return 0;
