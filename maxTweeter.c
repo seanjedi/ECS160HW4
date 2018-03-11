@@ -18,26 +18,31 @@ const char* get_filename_ext(const char *filename) {
 int get_name_field(char* line, int* field_count){
     char *token;
     int index = -1;
+    *field_count = 0;
+    
     token = strtok(line, ",");
-    while(token!= NULL)
-        token = strtok(line, ",");
+
+    while(token!= NULL){
         //if the field is the name, record what line it is
-        if(strcmp(token, "name") == 0){
+        if(strcmp(token, "\"name\"") == 0){
             //make sure name field appears only once
             if(index == -1){
-                index = *field_count; 
+                index = *field_count;
             }
             else{
                 return -1;
             }
+        }
         //count how many fields there are
-        *field_count += *field_count + 1;
+        *field_count += 1;
+        token = strtok(NULL, ",");
+
     }
     //if name field never found
     if(index == -1){
         return -1;
-    }
-    return 0;
+    } 
+    return index;
 
 }
 
@@ -68,12 +73,20 @@ int main(int argc,char *argv[])
         printf("invalid filename\n");
         return -1;
     }
-
     //open the csv file
     FILE* stream = fopen(file, "r");
-    char* line;
+    if(stream == NULL){
+        printf("File not found!\n");
+        return -1;
+    }
+
+    char line[1000];
     int field_count, name_field;
-    fgets(line, 377, stream);
+    if(fgets(line, 377, stream) == NULL){
+        printf("An error occured or File was empty!\n");
+        return -1;
+    }
+
     name_field = get_name_field(line, &field_count);
 
     if(name_field == -1){
@@ -82,32 +95,57 @@ int main(int argc,char *argv[])
     }
 
     struct tweeter *tweets = (struct tweeter *)malloc(sizeof(struct tweeter) * MAX_LINES);
-    int tweet_count = 0; 
+    int tweeter_count = 0;
     char* token;
     while (fgets(line, 377, stream)){
         int field_number = 0;
         token = strtok(line, ",");
-        while(token != NULL){
+        while(token != NULL){               
             if(field_number == name_field){
-                for(int i = 0; i <= tweet_count; i++){                
-                    if(i == tweet_count){
-                        tweets[tweet_count].name = token;
-                        tweets[tweet_count].count = 1;
+                for(int i = 0; i <= tweeter_count; i++){ 
+                    if(i == tweeter_count){
+                        tweets[tweeter_count].name = token;
+                        printf("Name: %s\n", tweets[i].name);
+                        tweets[tweeter_count].count = 1;
+                        tweeter_count++;
+                        break;
                     }else{
                         if(strcmp(tweets[i].name, token) == 0){
+                            printf("Name: %s\n", tweets[i].name);
                             tweets[i].count++;
+                            break;
                         }
                     }
                 }
             }
+            if(field_number == field_count){
+                printf("Too many entries on this line!\n");
+                return -1;
+            }
+            
+            field_number++;
+            token = strtok(NULL, ",");
+        }
+    }
 
-        if(field_number == field_count){
-            printf("Too many entries on this line!\n");
-            return -1;
+    //use bubblesort to sort out the struct
+    struct tweeter temp;
+    for(int i = 0; i < tweeter_count - 1; i++) {
+        for(int k = 0; k < tweeter_count - 1 - i; k++) {
+            if(tweets[k].count < tweets[k+1].count) {
+                temp = tweets[k];
+                tweets[k] = tweets[k+1];
+                tweets[k+1] = temp;
+            }
         }
-        field_number++;
-        token = strtok(line, ",");
-        }
+    }
+
+   
+    //print out the first 10 lines of the struct
+    int prints = 0;
+    while(prints < 10){ 
+        printf("<%s>: <%i>\n", tweets[prints].name, tweets[prints].count);
+        prints++;
     }
     
     return 0;
