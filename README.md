@@ -1,2 +1,2 @@
-# ECS160HW4
-part 1 of HW4 for ECS160
+Sean Malloy
+Nir Ovadia
