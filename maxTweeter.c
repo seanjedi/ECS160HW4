@@ -64,7 +64,7 @@ int main(int argc,char *argv[])
     //@argc: The input from command line
     if(argc!=2){
         //printf("unexpected number of arguments\n");
-	printf("InvalidInputFormat"\n);
+	printf("InvalidInputFormat\n");
         return -1;
     }
 
@@ -73,14 +73,14 @@ int main(int argc,char *argv[])
     if(strcmp(get_filename_ext(file), "csv") != 0)
     {
         //printf("invalid filename\n");
-	printf("InvalidInputFormat"\n);
+	printf("InvalidInputFormat\n");
         return -1;
     }
     //open the csv file
     FILE* stream = fopen(file, "r");
     if(stream == NULL){
         //printf("File not found!\n");
-	printf("InvalidInputFormat"\n);
+	printf("InvalidInputFormat\n");
 	return -1;
     }
 
@@ -93,7 +93,7 @@ int main(int argc,char *argv[])
     int field_count, name_field;
     if(fgets(line, 377, stream) == NULL){
         //printf("An error occured or File was empty!\n");
-	printf("InvalidInputFormat"\n);
+	printf("InvalidInputFormat\n");
         free(stream);
         return -1;
     }
@@ -106,7 +106,7 @@ int main(int argc,char *argv[])
     if(name_field == -1){
         free(stream);
         //printf("No name field in csv!\n");
-	printf("InvalidInputFormat"\n);
+	printf("InvalidInputFormat\n");
         return -1;
     }
 
@@ -149,7 +149,7 @@ int main(int argc,char *argv[])
         //if there is a wrong amount of fields on a line, then the line is invalid 
         if(field_number != field_count){
            //printf("Not the right amount of entries on this line!\n");
- 	   printf("InvalidInputFormat"\n);
+	   printf("InvalidInputFormat\n");
            for(int i = 0; i < tweeter_count; i++){
                 free(tweets[i].name);
             }
