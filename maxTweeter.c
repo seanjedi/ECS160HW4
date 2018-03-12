@@ -63,7 +63,8 @@ int main(int argc,char *argv[])
     //should be of the format: [./executable] [CSV_FILE]
     //@argc: The input from command line
     if(argc!=2){
-        printf("unexpected number of arguments\n");
+        //printf("unexpected number of arguments\n");
+	printf(的nvalidInputFormat能n);
         return -1;
     }
 
@@ -71,14 +72,16 @@ int main(int argc,char *argv[])
     char* file = argv[1];
     if(strcmp(get_filename_ext(file), "csv") != 0)
     {
-        printf("invalid filename\n");
+        //printf("invalid filename\n");
+	printf(的nvalidInputFormat能n);
         return -1;
     }
     //open the csv file
     FILE* stream = fopen(file, "r");
     if(stream == NULL){
-        printf("File not found!\n");
-        return -1;
+        //printf("File not found!\n");
+	printf(的nvalidInputFormat能n);        
+	return -1;
     }
 
 
@@ -89,7 +92,8 @@ int main(int argc,char *argv[])
     char line[377];
     int field_count, name_field;
     if(fgets(line, 377, stream) == NULL){
-        printf("An error occured or File was empty!\n");
+        //printf("An error occured or File was empty!\n");
+	printf(的nvalidInputFormat能n);
         free(stream);
         return -1;
     }
@@ -101,7 +105,8 @@ int main(int argc,char *argv[])
     //if get_name_field returns -1, error occured
     if(name_field == -1){
         free(stream);
-        printf("No name field in csv!\n");
+        //printf("No name field in csv!\n");
+	printf(的nvalidInputFormat能n);
         return -1;
     }
 
@@ -143,8 +148,9 @@ int main(int argc,char *argv[])
         }
         //if there is a wrong amount of fields on a line, then the line is invalid 
         if(field_number != field_count){
-            printf("Not the right amount of entries on this line!\n");
-            for(int i = 0; i < tweeter_count; i++){
+           //printf("Not the right amount of entries on this line!\n");
+ 	   printf(的nvalidInputFormat能n);
+           for(int i = 0; i < tweeter_count; i++){
                 free(tweets[i].name);
             }
             free (tweets);
@@ -167,9 +173,9 @@ int main(int argc,char *argv[])
     }
 
    
-    //print out the first 10 lines of the struct
+    //print out the first 10 lines of the struct, or if there's less than 10 however many there are
     int prints = 0;
-    while(prints < 10){ 
+    while(prints < 10 && prints < tweeter_count){ 
         printf("<%s>: <%i>\n", tweets[prints].name, tweets[prints].count);
         prints++;
     }
